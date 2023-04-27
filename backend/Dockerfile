@@ -12,6 +12,13 @@ RUN apk add --virtual .build-deps --no-cache postgresql-dev gcc python3-dev musl
         pip install --no-cache-dir -r requirements.txt && \
         apk --purge del .build-deps
 
+#install dependencies
+
+RUN apk add --no-cache jpeg-dev zlib-dev
+COPY --from=builder /usr/src/app/wheels /wheels
+COPY --from=builder /usr/src/app/requirements.txt .
+RUN pip install --no-cache /wheels/*
+
 COPY . /app/backend/
 
 CMD [ "python", "manage.py", "runserver", "0.0.0.0:8000" ]
