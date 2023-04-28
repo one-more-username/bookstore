@@ -13,7 +13,7 @@ class Basket(models.Model):
 
 class Order(models.Model):
     basket = models.ForeignKey(Basket, on_delete=models.CASCADE)
-    book_id = models.IntegerField()
+    book_id = models.IntegerField()  # or another identifier
 
     class Meta:
         verbose_name = "order"
