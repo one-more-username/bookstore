@@ -22,6 +22,7 @@ class Book(models.Model):
 
     class Meta:
         verbose_name = "book"
+        verbose_name_plural = "books"
 
     def __str__(self):
         return f"Book with title: {self.title}"
@@ -33,10 +34,9 @@ class Review(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     rating = models.PositiveSmallIntegerField(null=True)
 
-    # validate field 'rating' for admin https://django.fun/ru/docs/django/4.1/ref/validators/
-
     class Meta:
         verbose_name = "review"
+        verbose_name_plural = "reviews"
 
     def __str__(self):
-        return f"Review from user: {self.author}"
+        return f"Review from user: {self.author}, for {self.book}"

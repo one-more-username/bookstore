@@ -1,8 +1,8 @@
 from django.shortcuts import render
 from rest_framework import viewsets
 
-from backend.books.models import Book, Review
-from backend.books.serializers import BookSerializer, ReviewSerializer
+from .models import Book, Review
+from .serializers import BookSerializer, ReviewSerializer
 
 
 # Create your views here.
