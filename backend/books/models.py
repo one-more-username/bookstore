@@ -18,7 +18,8 @@ class Book(models.Model):
     release_date = models.DateField()
     price = models.IntegerField()
     author = models.CharField(max_length=30)
-    # rating = models.FloatField()
+    reviews_quantity = models.IntegerField(default=0)
+    # rating = models.FloatField()  #   get average from Review.objects.filter(author=user)?
 
     class Meta:
         verbose_name = "book"

@@ -21,8 +21,9 @@ class BookSerializer(serializers.ModelSerializer):
     release_date = serializers.DateField()
     price = serializers.IntegerField()
     author = serializers.CharField(max_length=30)
-    # rating = serializers.FloatField(min_value=0.0, max_value=10.0)
-    review = ReviewSerializer(many=True, read_only=True, allow_null=True)
+    reviews_quantity = serializers.IntegerField(default=0, read_only=True)
+    rating = serializers.FloatField(min_value=0.0, max_value=10.0, default=0.0, read_only=True)
+    # reviews = ReviewSerializer(many=True, read_only=True, allow_null=True)
 
     class Meta:
         model = Book

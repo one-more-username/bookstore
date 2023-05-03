@@ -2,8 +2,6 @@ from .views import *
 from rest_framework import routers
 
 router = routers.SimpleRouter()
-router.register(r'profile', ShoppingCartViewSet)
-router.register(r'favourite', BookForBuyViewSet)
+router.register(r'shopping_cart', ShoppingCartViewSet)
 
-urlpatterns = []
-urlpatterns += router.urls
+urlpatterns = router.urls
