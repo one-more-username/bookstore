@@ -2,7 +2,8 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.password_validation import validate_password
 from rest_framework import serializers
 
-from books.serializers import BookSerializer, FavouritesSerializer
+from books.models import Book
+from books.serializers import BookSerializer
 from .models import Profile
 
 User = get_user_model()
@@ -28,10 +29,14 @@ class UserSerializer(serializers.ModelSerializer):
         return attrs
 
 
+class FavouritesSerializer(serializers.Serializer):
+    book_id = serializers.PrimaryKeyRelatedField(queryset=Book.objects.all(), required=False)
+
+
 class ProfileSerializer(serializers.ModelSerializer):
     # user = UserSerializer()
-    # favourites = BookSerializer(many=True, default=None)  # book_id instead BookSerializer
-    favourites = FavouritesSerializer(many=True)
+    # favourites = FavouritesSerializer(many=True)
+    favourites = BookSerializer(many=True)
 
     class Meta:
         model = Profile

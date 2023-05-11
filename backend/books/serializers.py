@@ -30,5 +30,5 @@ class BookSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-class FavouritesSerializer(serializers.Serializer):
-    book_id = serializers.PrimaryKeyRelatedField(queryset=Book.objects.all(), required=False)
+# class FavouritesSerializer(serializers.Serializer):
+#     book_id = serializers.PrimaryKeyRelatedField(queryset=Book.objects.all(), required=False)

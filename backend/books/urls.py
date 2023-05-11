@@ -11,6 +11,6 @@ urlpatterns = [
     path('book/random/', RandomBooksView.as_view()),
     path('book/favourites/', FavouritesView.as_view()),
     path('book/favourites/add/', AddFavouritesView.as_view()),
-    path('book/favourites/remove/<int:book_id>', RemoveFavouritesView.as_view()),
+    path('book/favourites/remove/', RemoveFavouritesView.as_view()),
 ]
 urlpatterns += router.urls

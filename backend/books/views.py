@@ -9,9 +9,9 @@ from rest_framework.response import Response
 
 from users.models import Profile
 from users.permissions import IsOwnerProfileOrReadOnly
-from users.serializers import ProfileSerializer
+from users.serializers import ProfileSerializer, FavouritesSerializer
 from .models import Book, Review
-from .serializers import BookSerializer, ReviewSerializer, FavouritesSerializer
+from .serializers import BookSerializer, ReviewSerializer
 
 
 # Create your views here.
@@ -73,23 +73,17 @@ class FavouritesView(generics.GenericAPIView):
 
         return Response(serializer_class(profile.favourites).data)
 
-        # owner = request.user.id
-        # books = Book.objects.all()
-
-        # book_id = self.serializer(request.data.book_id, many=False)
-        # return Response(book_id.data)
-
 
 class AddFavouritesView(generics.GenericAPIView):
     queryset = Book.objects.all()
-    serializer = FavouritesSerializer
+    serializer_class = ProfileSerializer
     permission_classes = (IsOwnerProfileOrReadOnly, IsAuthenticated, )
 
     @extend_schema(
         summary='add to favourites for current user',
         tags=['favourites'],
         request=None,
-        responses={200: FavouritesSerializer},
+        responses={200: ProfileSerializer},
         parameters=[
             OpenApiParameter(
                 name="book_id",
@@ -101,57 +95,67 @@ class AddFavouritesView(generics.GenericAPIView):
     )
     def get(self, request, *args, **kwargs):
         params = request.query_params
-        s_params = FavouritesSerializer(data=params)
 
-        profile = Profile.objects.filter(user=request.user.id)
+        book = Book.objects.get(pk=params['book_id'])
 
-        if s_params.is_valid(raise_exception=True):
-            book_id = s_params.validated_data['book_id'].id
-            print("BOOK_ID", book_id)
+        profile = Profile.objects.get(user=request.user.id)
 
-            if book_id is not None:
-                book = Book.objects.filter(id=book_id)
-                # print("fadsf", book)
-                s_book = BookSerializer(data={
-                    "title": book[0].title,
-                    "description": book[0].description,
-                    # "image": book[0].image,
-                    "release_date": book[0].release_date,
-                    "price": book[0].price,
-                    "author": book[0].author,
-                    "reviews_quantity": book[0].reviews_quantity
-                })
-                if s_book.is_valid(raise_exception=True):
-                    print("S_BOOK_DATA", s_book.validated_data)
-                s_favourites = []
-                favourites = profile[0].favourites.all()
+        profile.favourites.add(book)
+        profile.save()
 
-                # profile[0].favourites = favourites
-                # profile.save()
+        # s_params = FavouritesSerializer(data=params)
+        #
+        # profile = Profile.objects.filter(user=request.user.id)
+        #
+        # if s_params.is_valid(raise_exception=True):
+        #     book_id = s_params.validated_data['book_id'].id
+        #
+        #     if book_id is not None:
+        #         book = Book.objects.get(pk=book_id)
+        #         s_book = BookSerializer(data=book)
+        #
+        #         # if s_book.is_valid(raise_exception=True):
+        #         #     print("BOOK", s_book.data)
+        #
+        #         profile[0].favourites.add(book)
+        #         # profile.save()
 
-        # profile.favourites += request.data['book_id']
-        # profile.save()
-
-        return Response(ProfileSerializer(profile, many=True).data)
+        return Response(self.get_serializer(profile).data)
 
 
 class RemoveFavouritesView(generics.GenericAPIView):
     queryset = Book.objects.all()
-    serializer = FavouritesSerializer
-    permission_classes = (IsOwnerProfileOrReadOnly, IsAuthenticated,)
+    serializer_class = ProfileSerializer
+    permission_classes = (IsOwnerProfileOrReadOnly, IsAuthenticated, )
 
     @extend_schema(
         summary='remove from favourites for current user',
         tags=['favourites'],
         request=None,
-        responses={200: FavouritesSerializer},
+        responses={200: ProfileSerializer},
+        parameters=[
+            OpenApiParameter(
+                name="book_id",
+                type=OpenApiTypes.INT,
+                location=OpenApiParameter.QUERY,
+                # required=False
+            ),
+        ],
     )
     def get(self, request, *args, **kwargs):
-        serializer_class = FavouritesSerializer
+        params = request.query_params
+        print("BOOK_ID", params['book_id'])
+        # book = Book.objects.get(pk=params['book_id'])
 
-        profile = Profile.objects.filter(user=settings.AUTH_USER_MODEL)
+        profile = Profile.objects.get(user=request.user.id)
 
-        profile.favourites += request.data['favourites']['book_id']
+        # profile.favourites.add(book)
         # profile.save()
+        print("FAVOURITES", profile.favourites)
 
-        return Response(serializer_class(profile.favourites).data)
+        # for item in favourites:
+        #     if item['id'] == params['book_id']:
+        #         # remove book from favourites
+        #         return Response()
+
+        return Response(self.get_serializer(profile).data)
