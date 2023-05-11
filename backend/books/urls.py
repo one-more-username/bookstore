@@ -7,18 +7,10 @@ router = routers.SimpleRouter()
 router.register(r'book', BookViewSet)
 router.register(r'review', ReviewViewSet)
 
-urlpatterns = router.urls
-# urlpatterns = [
-#     path('book/', BookViewSet.as_view({
-#         'get': 'retrieve',
-#         'put': 'update',
-#         'patch': 'partial_update',
-#         'delete': 'destroy'
-#     })),
-#     path('review/', ReviewViewSet.as_view({
-#         'get': 'retrieve',
-#         'put': 'update',
-#         'patch': 'partial_update',
-#         'delete': 'destroy'
-#     })),
-# ]
+urlpatterns = [
+    path('book/random/', RandomBooksView.as_view()),
+    path('book/favourites/', FavouritesView.as_view()),
+    path('book/favourites/add/', AddFavouritesView.as_view()),
+    path('book/favourites/remove/<int:book_id>', RemoveFavouritesView.as_view()),
+]
+urlpatterns += router.urls

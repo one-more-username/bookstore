@@ -6,7 +6,11 @@ from rest_framework import routers
 router = routers.SimpleRouter()
 router.register(r'profile', ProfileViewSet)
 
-urlpatterns = [path('registration', UserRegistrationView.as_view()), ]  #   change it TODO
-# urlpatterns = [path('login', UserLoginView.as_view(), name="login"), ]
-# urlpatterns = [path('logout', UserLogoutView.as_view(), name="logout"), ]
+urlpatterns = []
+# urlpatterns = [path('registration', UserRegistrationView.as_view()), ]
+# gets all user profiles and create a new profile
+path("all-profiles", UserRegistrationView.as_view(), name="all-profiles"),
+# retrieves profile details of the currently logged in user
+path("profile/<int:pk>", UserLoginView.as_view(), name="profile"),
+
 urlpatterns += router.urls

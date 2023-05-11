@@ -15,8 +15,8 @@ class ReviewSerializer(serializers.ModelSerializer):
 
 
 class BookSerializer(serializers.ModelSerializer):
-    title = serializers.CharField(max_length=50)
-    description = serializers.CharField(max_length=255)
+    title = serializers.CharField()
+    description = serializers.CharField()
     image = serializers.ImageField(required=False)
     release_date = serializers.DateField()
     price = serializers.IntegerField()
@@ -28,3 +28,7 @@ class BookSerializer(serializers.ModelSerializer):
     class Meta:
         model = Book
         fields = "__all__"
+
+
+class FavouritesSerializer(serializers.Serializer):
+    book_id = serializers.PrimaryKeyRelatedField(queryset=Book.objects.all(), required=False)

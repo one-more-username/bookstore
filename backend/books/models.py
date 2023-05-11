@@ -12,8 +12,8 @@ def upload_path_image(instance, filename):
 # Create your models here.
 
 class Book(models.Model):
-    title = models.CharField(max_length=50, unique=True)
-    description = models.CharField(max_length=255)
+    title = models.CharField()
+    description = models.TextField()
     image = models.ImageField(upload_to=upload_path_image)
     release_date = models.DateField()
     price = models.IntegerField()
@@ -26,7 +26,7 @@ class Book(models.Model):
         verbose_name_plural = "books"
 
     def __str__(self):
-        return f"Book with title: {self.title}"
+        return f"Book with title: {self.title} and ID: {self.id}"
 
 
 class Review(models.Model):
