@@ -1,17 +1,25 @@
 from rest_framework import serializers
+from rest_framework.validators import UniqueTogetherValidator
 
 from .models import Book, Review
 
 
 class ReviewSerializer(serializers.ModelSerializer):
     # book = models.ForeignKey(Book, on_delete=models.CASCADE)
-    review = serializers.CharField(max_length=255)
+    review = serializers.CharField()
     author = serializers.ReadOnlyField(default=serializers.CurrentUserDefault())
     rating = serializers.IntegerField(max_value=10, min_value=1)
 
     class Meta:
         model = Review
         fields = "__all__"
+        exclude = ('book',)  # todo check it!
+        validators = [
+            UniqueTogetherValidator(
+                queryset=Review.objects.all(),
+                fields=['author', 'book']
+            )
+        ]
 
 
 class BookSerializer(serializers.ModelSerializer):
@@ -23,7 +31,7 @@ class BookSerializer(serializers.ModelSerializer):
     author = serializers.CharField(max_length=30)
     reviews_quantity = serializers.IntegerField(default=0, read_only=True)
     rating = serializers.FloatField(min_value=0.0, max_value=10.0, default=0.0, read_only=True)
-    # reviews = ReviewSerializer(many=True, read_only=True, allow_null=True)
+    reviews = ReviewSerializer(many=True, read_only=True, allow_null=True)
 
     class Meta:
         model = Book

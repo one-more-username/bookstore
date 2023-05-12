@@ -1,15 +1,14 @@
 from random import sample
 
-from django.conf import settings
 from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import extend_schema, OpenApiParameter
-from rest_framework import viewsets, generics
+from rest_framework import viewsets, generics, status
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated, AllowAny
 from rest_framework.response import Response
 
 from users.models import Profile
 from users.permissions import IsOwnerProfileOrReadOnly
-from users.serializers import ProfileSerializer, FavouritesSerializer
+from users.serializers import ProfileSerializer
 from .models import Book, Review
 from .serializers import BookSerializer, ReviewSerializer
 
@@ -45,16 +44,76 @@ class RandomBooksView(generics.ListAPIView):
         return Response(random_books)
 
 
-class ReviewViewSet(viewsets.ModelViewSet):
-    queryset = Review.objects.all()
+# class ReviewViewSet(viewsets.ModelViewSet):
+#     queryset = Review.objects.all()
+#     serializer_class = ReviewSerializer
+#     permission_classes = (IsOwnerProfileOrReadOnly, IsAuthenticated,)
+#
+#     def create(self, request, *args, **kwargs):
+#         review = Review.objects.create(
+#             book=Book.objects.get(),
+#             review=request.data['review'],
+#             author=request.user,
+#             rating=request.data['rating'],
+#         )
+#         # serializer = self.get_serializer(data=request.data)
+#         # serializer.is_valid(raise_exception=True)
+#         # self.perform_create(serializer)
+#         # headers = self.get_success_headers(serializer.data)
+#
+#         return Response("serializer.data, status=status.HTTP_201_CREATED")
+
+class AddReviewView(generics.GenericAPIView):
+    queryset = Book.objects.all()  # or Book?
     serializer_class = ReviewSerializer
-    # permission_classes
+    lookup_field = 'id'
+    lookup_url_kwarg = 'book_id'
+    permission_classes = (IsOwnerProfileOrReadOnly, IsAuthenticated,)
+
+    # def get_queryset(self):
+    #     qs = super().get_queryset()
+    #     return qs.filter(id=self.request.data['book'])
+
+    @extend_schema(
+        summary='add review for the book',
+        tags=['reviews'],
+        request=ReviewSerializer,
+        responses={200: ReviewSerializer},
+        parameters=[
+            OpenApiParameter(
+                name="book_id",
+                type=OpenApiTypes.INT,
+                location=OpenApiParameter.PATH
+            ),
+        ],
+    )
+    def post(self, request, *args, **kwargs):
+        # book = self.get_object()
+        # print("BOOK", book)
+
+        book = Book.objects.get(pk=request.data['book'])
+        print("REVIEWS", book.reviews.all())
+        # print("REVIEW", book.review)
+
+        # review = Review.objects.create(
+        #     author=request.user,
+        #     book=book,
+        #     review=request.data['review'],
+        #     rating=request.data['rating'],
+        # )
+        # review.save()
+
+        return Response('self.get_serializer(review).data')
 
 
 class FavouritesView(generics.GenericAPIView):
     queryset = Book.objects.all()
-    serializer = FavouritesSerializer
+    serializer_class = ProfileSerializer
     permission_classes = (IsOwnerProfileOrReadOnly, IsAuthenticated,)
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        return qs.filter(profile__user=self.request.user.id)
 
     @extend_schema(
         methods=['get'],
@@ -64,20 +123,17 @@ class FavouritesView(generics.GenericAPIView):
         responses={200: ProfileSerializer},
     )
     def get(self, request, *args, **kwargs):
-        serializer_class = FavouritesSerializer
+        profile = Profile.objects.get(user=request.user.id)
 
-        profile = Profile.objects.filter(user=settings.AUTH_USER_MODEL)
-
-        profile.favourites += request.data['favourites']['book_id']
-        # profile.save()
-
-        return Response(serializer_class(profile.favourites).data)
+        return Response(self.get_serializer(profile).data)
 
 
 class AddFavouritesView(generics.GenericAPIView):
     queryset = Book.objects.all()
     serializer_class = ProfileSerializer
-    permission_classes = (IsOwnerProfileOrReadOnly, IsAuthenticated, )
+    lookup_field = 'id'
+    lookup_url_kwarg = 'book_id'
+    permission_classes = (IsOwnerProfileOrReadOnly, IsAuthenticated,)
 
     @extend_schema(
         summary='add to favourites for current user',
@@ -88,45 +144,29 @@ class AddFavouritesView(generics.GenericAPIView):
             OpenApiParameter(
                 name="book_id",
                 type=OpenApiTypes.INT,
-                location=OpenApiParameter.QUERY,
-                # required=False
+                location=OpenApiParameter.PATH
             ),
         ],
     )
     def get(self, request, *args, **kwargs):
-        params = request.query_params
-
-        book = Book.objects.get(pk=params['book_id'])
-
+        book = self.get_object()
         profile = Profile.objects.get(user=request.user.id)
 
         profile.favourites.add(book)
-        profile.save()
 
-        # s_params = FavouritesSerializer(data=params)
-        #
-        # profile = Profile.objects.filter(user=request.user.id)
-        #
-        # if s_params.is_valid(raise_exception=True):
-        #     book_id = s_params.validated_data['book_id'].id
-        #
-        #     if book_id is not None:
-        #         book = Book.objects.get(pk=book_id)
-        #         s_book = BookSerializer(data=book)
-        #
-        #         # if s_book.is_valid(raise_exception=True):
-        #         #     print("BOOK", s_book.data)
-        #
-        #         profile[0].favourites.add(book)
-        #         # profile.save()
-
-        return Response(self.get_serializer(profile).data)
+        return Response({"Success": "Book added in favourites"}, status=status.HTTP_200_OK)
 
 
 class RemoveFavouritesView(generics.GenericAPIView):
     queryset = Book.objects.all()
+    lookup_field = 'id'
+    lookup_url_kwarg = 'book_id'
     serializer_class = ProfileSerializer
-    permission_classes = (IsOwnerProfileOrReadOnly, IsAuthenticated, )
+    permission_classes = (IsOwnerProfileOrReadOnly, IsAuthenticated,)
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        return qs.filter(profile__user=self.request.user.id)
 
     @extend_schema(
         summary='remove from favourites for current user',
@@ -137,25 +177,15 @@ class RemoveFavouritesView(generics.GenericAPIView):
             OpenApiParameter(
                 name="book_id",
                 type=OpenApiTypes.INT,
-                location=OpenApiParameter.QUERY,
-                # required=False
+                location=OpenApiParameter.PATH
             ),
         ],
     )
     def get(self, request, *args, **kwargs):
-        params = request.query_params
-        print("BOOK_ID", params['book_id'])
-        # book = Book.objects.get(pk=params['book_id'])
-
+        book = self.get_object()
         profile = Profile.objects.get(user=request.user.id)
 
-        # profile.favourites.add(book)
-        # profile.save()
-        print("FAVOURITES", profile.favourites)
+        profile.favourites.remove(book)  # OrderSet?
 
-        # for item in favourites:
-        #     if item['id'] == params['book_id']:
-        #         # remove book from favourites
-        #         return Response()
-
-        return Response(self.get_serializer(profile).data)
+        # return Response(self.get_serializer(profile).data)
+        return Response({"Success": "Book removed from favourites"}, status=status.HTTP_200_OK)

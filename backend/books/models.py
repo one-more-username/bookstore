@@ -30,9 +30,10 @@ class Book(models.Model):
 
 
 class Review(models.Model):
-    book = models.ForeignKey(Book, on_delete=models.CASCADE)
-    review = models.CharField(max_length=255)
-    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    # unique?
+    book = models.ForeignKey(Book, on_delete=models.CASCADE, related_name='reviews')  # null=True, blank=True?
+    review = models.TextField()
+    author = models.ForeignKey(User, on_delete=models.CASCADE)  # null=True, blank=True?
     rating = models.PositiveSmallIntegerField(null=True)
 
     class Meta:
