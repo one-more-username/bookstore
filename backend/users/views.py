@@ -4,31 +4,23 @@ from rest_framework import viewsets, generics, status
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 
-from . import serializers
+from purchases.models import ShoppingCart
 from .models import Profile
 from .permissions import IsOwnerProfileOrReadOnly
-from .serializers import ProfileSerializer
-
+from .serializers import ProfileSerializer, UserRegistrationSerializer
 
 User = get_user_model()
 
 # Create your views here.
 
 
-class ProfileViewSet(viewsets.ModelViewSet):
-    # queryset = SubNote.objects.select_related("from_note")
-    queryset = Profile.objects.all()
-    serializer_class = ProfileSerializer
-    permission_classes = (IsOwnerProfileOrReadOnly, IsAuthenticated, )
-
-
-class UserRegistrationView(generics.ListCreateAPIView):
+class UserRegistrationView(generics.GenericAPIView):
     queryset = User.objects.all()
-    permission_classes = (IsAuthenticated, )
-    serializer_class = serializers.UserSerializer
+    permission_classes = (AllowAny, )
+    serializer_class = UserRegistrationSerializer
 
-    @transaction.atomic
-    def create(self, request, *args, **kwargs):
+    @transaction.atomic  # does it need at decorator extended schema?
+    def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
@@ -42,28 +34,14 @@ class UserRegistrationView(generics.ListCreateAPIView):
             user=user,
         )
         profile.save()
+
+        profile.refresh_from_db()
+        shopping_cart = ShoppingCart(
+            owner=profile,
+        )
+        shopping_cart.save()
+
         user.refresh_from_db()
-        sr_user = serializers.UserSerializer(user)
+        sr_user = UserRegistrationSerializer(user)
 
         return Response(sr_user.data, status=status.HTTP_201_CREATED)
-
-    # def perform_create(self, serializer):
-    #     user = self.request.user
-    #     serializer.save(user=user)
-
-
-class UserLoginView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = User.objects.all()
-    permission_classes = (IsOwnerProfileOrReadOnly, IsAuthenticated, )
-    serializer_class = serializers.UserSerializer
-
-
-# class AddToFavouriteView(generics.UpdateAPIView):
-#     queryset = Profile.objects.all()
-#     permission_classes = (IsOwnerProfileOrReadOnly, IsAuthenticated, )
-#     serializer_class = serializers.ProfileSerializer
-#
-#     def partial_update(self, request, *args, **kwargs):
-#         kwargs['partial'] = True
-#         return self.update(request, *args, **kwargs)
-

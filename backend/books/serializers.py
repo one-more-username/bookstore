@@ -5,7 +5,7 @@ from .models import Book, Review
 
 
 class ReviewSerializer(serializers.ModelSerializer):
-    # book = models.ForeignKey(Book, on_delete=models.CASCADE)
+    book = serializers.ReadOnlyField()
     review = serializers.CharField()
     author = serializers.ReadOnlyField(default=serializers.CurrentUserDefault())
     rating = serializers.IntegerField(max_value=10, min_value=1)
@@ -13,7 +13,6 @@ class ReviewSerializer(serializers.ModelSerializer):
     class Meta:
         model = Review
         fields = "__all__"
-        exclude = ('book',)  # todo check it!
         validators = [
             UniqueTogetherValidator(
                 queryset=Review.objects.all(),

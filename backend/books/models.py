@@ -1,7 +1,6 @@
 from django.db import models
 from django.contrib.auth import get_user_model
 
-
 User = get_user_model()
 
 
@@ -19,7 +18,7 @@ class Book(models.Model):
     price = models.IntegerField()
     author = models.CharField(max_length=30)
     reviews_quantity = models.IntegerField(default=0)
-    # rating = models.FloatField()  #   get average from Review.objects.filter(author=user)?
+    # quantity = models.PositiveSmallIntegerField(default=100)
 
     class Meta:
         verbose_name = "book"
@@ -30,15 +29,21 @@ class Book(models.Model):
 
 
 class Review(models.Model):
-    # unique?
-    book = models.ForeignKey(Book, on_delete=models.CASCADE, related_name='reviews')  # null=True, blank=True?
+    book = models.ForeignKey(Book, on_delete=models.CASCADE, related_name='reviews')
     review = models.TextField()
-    author = models.ForeignKey(User, on_delete=models.CASCADE)  # null=True, blank=True?
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
     rating = models.PositiveSmallIntegerField(null=True)
 
     class Meta:
         verbose_name = "review"
         verbose_name_plural = "reviews"
+        constraints = [
+            models.UniqueConstraint(
+                fields=['book', 'author'],
+                name='Unique book and author for review',
+                violation_error_message="Combination of the book and the author should be unique"
+            )
+        ]
 
     def __str__(self):
         return f"Review from user: {self.author}, for {self.book}"

@@ -5,8 +5,9 @@ from books.serializers import BookSerializer
 
 
 class ShoppingCartSerializer(serializers.ModelSerializer):
-    owner = serializers.CharField(max_length=30)
-    books = BookSerializer(many=True)
+    # owner = serializers.CharField(max_length=30)
+    owner = serializers.ReadOnlyField()
+    books_to_purchase = BookSerializer(many=True)
 
     class Meta:
         model = ShoppingCart

@@ -1,4 +1,4 @@
-from django.urls import include, path
+from django.urls import path
 
 from .views import *
 from rest_framework import routers
@@ -13,6 +13,6 @@ urlpatterns = [
     path('book/<int:book_id>/add-favourite/', AddFavouritesView.as_view()),
     path('book/<int:book_id>/remove-favourite/', RemoveFavouritesView.as_view()),
     path('book/<int:book_id>/add-review/', AddReviewView.as_view()),
-    # path('book/<int:book_id>/reviews/', RemoveFavouritesView.as_view()),
+    # path('book/<int:book_id>/reviews/', BookReviewsView.as_view()),
 ]
 urlpatterns += router.urls

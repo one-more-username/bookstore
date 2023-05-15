@@ -14,23 +14,12 @@ from .serializers import BookSerializer, ReviewSerializer
 
 
 # Create your views here.
-# class GetRandomBooksView(views.APIView):
-# random_object = Book.objects.order_by('?')[0]
-# or
-# products = list(Book.objects.all())
-# products = random.sample(products, 10)
 
 
 class BookViewSet(viewsets.ModelViewSet):
     queryset = Book.objects.all()
     serializer_class = BookSerializer
     permission_classes = (IsAuthenticatedOrReadOnly,)
-
-    # @action(methods=['get'], detail=False, url_path='get-random-books')
-    # def get_random_books(self, *args, **kwargs):
-    #     books = Book.objects.all()
-    #     random_books = sample(self.get_serializer(books, many=True).data, 10)
-    #     return Response(random_books)
 
 
 class RandomBooksView(generics.ListAPIView):
@@ -44,41 +33,18 @@ class RandomBooksView(generics.ListAPIView):
         return Response(random_books)
 
 
-# class ReviewViewSet(viewsets.ModelViewSet):
-#     queryset = Review.objects.all()
-#     serializer_class = ReviewSerializer
-#     permission_classes = (IsOwnerProfileOrReadOnly, IsAuthenticated,)
-#
-#     def create(self, request, *args, **kwargs):
-#         review = Review.objects.create(
-#             book=Book.objects.get(),
-#             review=request.data['review'],
-#             author=request.user,
-#             rating=request.data['rating'],
-#         )
-#         # serializer = self.get_serializer(data=request.data)
-#         # serializer.is_valid(raise_exception=True)
-#         # self.perform_create(serializer)
-#         # headers = self.get_success_headers(serializer.data)
-#
-#         return Response("serializer.data, status=status.HTTP_201_CREATED")
-
 class AddReviewView(generics.GenericAPIView):
-    queryset = Book.objects.all()  # or Book?
+    queryset = Book.objects.all()
     serializer_class = ReviewSerializer
     lookup_field = 'id'
     lookup_url_kwarg = 'book_id'
     permission_classes = (IsOwnerProfileOrReadOnly, IsAuthenticated,)
 
-    # def get_queryset(self):
-    #     qs = super().get_queryset()
-    #     return qs.filter(id=self.request.data['book'])
-
     @extend_schema(
         summary='add review for the book',
         tags=['reviews'],
         request=ReviewSerializer,
-        responses={200: ReviewSerializer},
+        responses={200: {"Success": "Review added"}},
         parameters=[
             OpenApiParameter(
                 name="book_id",
@@ -88,22 +54,18 @@ class AddReviewView(generics.GenericAPIView):
         ],
     )
     def post(self, request, *args, **kwargs):
-        # book = self.get_object()
-        # print("BOOK", book)
 
-        book = Book.objects.get(pk=request.data['book'])
-        print("REVIEWS", book.reviews.all())
-        # print("REVIEW", book.review)
+        book = Book.objects.get(pk=kwargs['book_id'])
 
-        # review = Review.objects.create(
-        #     author=request.user,
-        #     book=book,
-        #     review=request.data['review'],
-        #     rating=request.data['rating'],
-        # )
-        # review.save()
+        review = Review(
+            author=request.user,
+            book=book,
+            review=request.data['review'],
+            rating=request.data['rating'],
+        )
+        review.save()
 
-        return Response('self.get_serializer(review).data')
+        return Response({"Success": "Review added"}, status=status.HTTP_200_OK)
 
 
 class FavouritesView(generics.GenericAPIView):
@@ -185,7 +147,6 @@ class RemoveFavouritesView(generics.GenericAPIView):
         book = self.get_object()
         profile = Profile.objects.get(user=request.user.id)
 
-        profile.favourites.remove(book)  # OrderSet?
+        profile.favourites.remove(book)
 
-        # return Response(self.get_serializer(profile).data)
         return Response({"Success": "Book removed from favourites"}, status=status.HTTP_200_OK)

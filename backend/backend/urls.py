@@ -31,8 +31,8 @@ urlpatterns = [
     path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('token/verify/', TokenVerifyView.as_view(), name='token_verify'),
     #
-    path('auth/', include('djoser.urls')),
-    path('authjwt/', include('djoser.urls.jwt')),
+    # path('auth/', include('djoser.urls')),
+    # path('authjwt/', include('djoser.urls.jwt')),
     #
     path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
     path('api/schema/swagger-ui/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
