@@ -8,7 +8,7 @@ from .models import Profile
 User = get_user_model()
 
 
-class UserRegistrationSerializer(serializers.ModelSerializer):  # todo different serializers for signup and login?
+class UserRegistrationSerializer(serializers.ModelSerializer):
     username = serializers.CharField(max_length=50)
     password = serializers.CharField(write_only=True, required=True, validators=[validate_password])
     password2 = serializers.CharField(write_only=True, required=True)

@@ -8,6 +8,7 @@ User = get_user_model()
 
 # Create your models here.
 
+
 class ShoppingCart(models.Model):
     owner = models.OneToOneField(Profile, on_delete=models.CASCADE)
     books_to_purchase = models.ManyToManyField(Book, default=None)
@@ -17,3 +18,7 @@ class ShoppingCart(models.Model):
 
     def __str__(self):
         return f"Shopping cart for user: {self.owner}"
+
+
+# class BookToPurchase(models.Model):
+#     book_id = models.ForeignKey(ShoppingCart, on_delete=models.CASCADE())

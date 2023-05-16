@@ -8,8 +8,9 @@ router = routers.SimpleRouter()
 
 urlpatterns = [
     path('shopping-cart/add-book/<int:book_id>/', AddToShoppingCartView.as_view()),
-    # path('shopping-cart/remove-book/<int:book_id>/', RemoveFromShoppingView.as_view()),
-    # path('shopping-cart/', ShoppingCartView.as_view()),
+    # todo: validation for existing books in shopping cart
+    path('shopping-cart/remove-book/<int:book_id>/', RemoveFromShoppingCartView.as_view()),
+    path('shopping-cart/', GetShoppingCartView.as_view()),
     # path('shopping-cart/buy/', ShoppingCartBuyView.as_view())
 ]
 urlpatterns += router.urls
