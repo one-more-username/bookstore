@@ -31,10 +31,12 @@ class BookSerializer(serializers.ModelSerializer):
     reviews_quantity = serializers.IntegerField(default=0, read_only=True)
     rating = serializers.FloatField(min_value=0.0, max_value=10.0, default=0.0, read_only=True)
     reviews = ReviewSerializer(many=True, read_only=True, allow_null=True)
+    # quantity = serializers.IntegerField(read_only=True)
 
     class Meta:
         model = Book
-        fields = "__all__"
+        exclude = ['quantity', ]
+        # fields = "__all__"
 
 
 # class FavouritesSerializer(serializers.Serializer):

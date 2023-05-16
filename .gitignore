@@ -4,7 +4,8 @@ __pycache__/
 *$py.class
 
 # db
-/data
+/data/
+/data/db/
 
 # C extensions
 *.so

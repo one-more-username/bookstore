@@ -18,7 +18,7 @@ class Book(models.Model):
     price = models.IntegerField()
     author = models.CharField(max_length=30)
     reviews_quantity = models.IntegerField(default=0)
-    # quantity = models.PositiveSmallIntegerField(default=100)
+    quantity = models.PositiveSmallIntegerField(default=100)
 
     class Meta:
         verbose_name = "book"

@@ -8,7 +8,6 @@ from books.models import Book
 from books.serializers import BookSerializer
 from users.models import Profile
 from users.permissions import IsOwnerProfileOrReadOnly
-from users.serializers import ProfileSerializer
 from .models import ShoppingCart
 from .serializers import ShoppingCartSerializer
 
@@ -79,8 +78,6 @@ class RemoveFromShoppingCartView(generics.GenericAPIView):
 class GetShoppingCartView(generics.GenericAPIView):
     queryset = ShoppingCart.objects.all()
     serializer_class = ShoppingCartSerializer
-    lookup_field = 'id'
-    lookup_url_kwarg = 'book_id'
     permission_classes = (IsOwnerProfileOrReadOnly, IsAuthenticated,)
 
     @extend_schema(
@@ -91,10 +88,33 @@ class GetShoppingCartView(generics.GenericAPIView):
     )
     def get(self, request, *args, **kwargs):
         profile = Profile.objects.get(user=request.user.id)
-        s_profile = ProfileSerializer(data=profile)
 
-        shopping_cart = ShoppingCart.objects.get(owner=s_profile.initial_data)
+        shopping_cart = ShoppingCart.objects.get(owner=profile)
 
         books_to_purchase = shopping_cart.books_to_purchase.all().values()
 
         return Response(BookSerializer(books_to_purchase, many=True).data, status=status.HTTP_200_OK)
+
+
+class MakePurchaseView(generics.GenericAPIView):
+    queryset = ShoppingCart.objects.all()
+    serializer_class = ShoppingCartSerializer
+    permission_classes = (IsOwnerProfileOrReadOnly, IsAuthenticated,)
+
+    @extend_schema(
+        summary='make a purchase',
+        tags=['shopping cart'],
+        request=None,
+        responses={200: BookSerializer(many=True)},  # {200: {'Success': 'Purchase completed'}}
+    )
+    def get(self, request, *args, **kwargs):
+        profile = Profile.objects.get(user=request.user.id)
+
+        shopping_cart = ShoppingCart.objects.get(owner=profile)
+
+        books_to_purchase = shopping_cart.books_to_purchase.all().values()
+
+        # todo: save books_to_purchase in profile.purchase_history and then clear books_to_purchase
+
+        return Response('BookSerializer(books_to_purchase, many=True).data, status=status.HTTP_200_OK')
+

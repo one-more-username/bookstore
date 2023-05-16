@@ -3,6 +3,7 @@ from random import sample
 from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import extend_schema, OpenApiParameter
 from rest_framework import viewsets, generics, status
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated, AllowAny
 from rest_framework.response import Response
 
@@ -14,6 +15,46 @@ from .serializers import BookSerializer, ReviewSerializer
 
 
 # Create your views here.
+
+
+class BookSearchPagination(PageNumberPagination):
+    page_size = 10  # quantity of items on the page
+    page_size_query_params = 'page_size'
+    max_page_size = 25
+
+
+class BookSearchView(generics.GenericAPIView):
+    queryset = Book.objects.all()
+    permission_classes = (AllowAny,)  # or (IsOwnerProfileOrReadOnly, IsAuthenticated,) ?
+    serializer_class = BookSerializer
+    pagination_class = BookSearchPagination
+    # lookup_field = 'id'
+    # lookup_url_kwarg = 'title'
+    
+    @extend_schema(
+        summary='book search',
+        tags=['book'],
+        request=None,
+        responses={200: BookSerializer(many=True)},
+        parameters=[
+            OpenApiParameter(
+                name="title",
+                type=OpenApiTypes.STR,
+                location=OpenApiParameter.PATH
+            ),
+        ],
+    )
+    def get(self, request, *args, **kwargs):
+        # todo: error if book have reviews
+        # title = request.query_params['title']
+        # or
+        # title = kwargs['title']
+        # book = Book.objects.get(title=kwargs['title'])
+        # print(kwargs['title'])
+        books = Book.objects.filter(title__icontains=kwargs['title'])
+        # print("BOOKS", books)
+
+        return Response(BookSerializer(books, many=True).data, status=status.HTTP_200_OK)
 
 
 class BookViewSet(viewsets.ModelViewSet):
@@ -54,7 +95,6 @@ class AddReviewView(generics.GenericAPIView):
         ],
     )
     def post(self, request, *args, **kwargs):
-
         book = Book.objects.get(pk=kwargs['book_id'])
 
         review = Review(
