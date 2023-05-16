@@ -1,10 +1,11 @@
 from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import extend_schema, OpenApiParameter
 from rest_framework import generics, status
-from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from books.models import Book
+from books.serializers import BookSerializer
 from users.models import Profile
 from users.permissions import IsOwnerProfileOrReadOnly
 from users.serializers import ProfileSerializer
@@ -86,11 +87,14 @@ class GetShoppingCartView(generics.GenericAPIView):
         summary='get shopping cart for current user',
         tags=['shopping cart'],
         request=None,
-        responses={200: ShoppingCartSerializer},
+        responses={200: BookSerializer(many=True)},
     )
     def get(self, request, *args, **kwargs):
         profile = Profile.objects.get(user=request.user.id)
+        s_profile = ProfileSerializer(data=profile)
 
-        shopping_cart = ShoppingCart.objects.get(owner=profile)
+        shopping_cart = ShoppingCart.objects.get(owner=s_profile.initial_data)
 
-        return Response(self.get_serializer(shopping_cart).data, status=status.HTTP_200_OK)
+        books_to_purchase = shopping_cart.books_to_purchase.all().values()
+
+        return Response(BookSerializer(books_to_purchase, many=True).data, status=status.HTTP_200_OK)

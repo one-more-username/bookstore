@@ -18,6 +18,7 @@
       <excludeFolder url="file://$MODULE_DIR$/data/db/pg_notify" />
       <excludeFolder url="file://$MODULE_DIR$/data/db/pg_wal/archive_status" />
       <excludeFolder url="file://$MODULE_DIR$/frontend/node_modules" />
+      <excludeFolder url="file://$MODULE_DIR$/data/db/pg_stat" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
