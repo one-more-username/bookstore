@@ -105,16 +105,16 @@ class MakePurchaseView(generics.GenericAPIView):
         summary='make a purchase',
         tags=['shopping cart'],
         request=None,
-        responses={200: BookSerializer(many=True)},  # {200: {'Success': 'Purchase completed'}}
+        responses={200: {'Success': 'Purchase completed'}},
     )
     def get(self, request, *args, **kwargs):
-        profile = Profile.objects.get(user=request.user.id)
+        shopping_cart = ShoppingCart.objects.get(owner=request.user.id)
 
-        shopping_cart = ShoppingCart.objects.get(owner=profile)
+        books_to_purchase = shopping_cart.books_to_purchase.all()
+        purchase_history = shopping_cart.owner.purchase_history.all()
 
-        books_to_purchase = shopping_cart.books_to_purchase.all().values()
+        shopping_cart.owner.purchase_history.set(books_to_purchase | purchase_history)
+        shopping_cart.books_to_purchase.clear()
 
-        # todo: save books_to_purchase in profile.purchase_history and then clear books_to_purchase
-
-        return Response('BookSerializer(books_to_purchase, many=True).data, status=status.HTTP_200_OK')
+        return Response({'Success': 'Purchase completed'}, status=status.HTTP_200_OK)
 

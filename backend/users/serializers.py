@@ -30,8 +30,8 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
 
 class ProfileSerializer(serializers.ModelSerializer):
     favourites = BookSerializer(many=True)
+    purchase_history = BookSerializer(many=True)
 
     class Meta:
         model = Profile
-        fields = ("favourites", )
-
+        fields = ("favourites", "purchase_history")

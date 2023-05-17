@@ -19,6 +19,7 @@ class Book(models.Model):
     author = models.CharField(max_length=30)
     reviews_quantity = models.IntegerField(default=0)
     quantity = models.PositiveSmallIntegerField(default=100)
+    # favourite_by = models.ManyToManyField(User, default=None, related_name='favourites')
 
     class Meta:
         verbose_name = "book"

@@ -1,5 +1,6 @@
 from random import sample
 
+from django_filters import rest_framework as filters
 from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import extend_schema, OpenApiParameter
 from rest_framework import viewsets, generics, status
@@ -17,6 +18,10 @@ from .serializers import BookSerializer, ReviewSerializer
 # Create your views here.
 
 
+class BookSearchFilter(filters.FilterSet):
+    pass
+
+
 class BookSearchPagination(PageNumberPagination):
     page_size = 10  # quantity of items on the page
     page_size_query_params = 'page_size'
@@ -28,8 +33,26 @@ class BookSearchView(generics.GenericAPIView):
     permission_classes = (AllowAny,)  # or (IsOwnerProfileOrReadOnly, IsAuthenticated,) ?
     serializer_class = BookSerializer
     pagination_class = BookSearchPagination
+    # filter_backends = [filters.DjangoFilterBackend]
+    # filterset_fields = ('title',)
+    # search_fields = ['title']
+    # filterset_class = BookSearchFilter
+
     # lookup_field = 'id'
     # lookup_url_kwarg = 'title'
+
+    # def get_queryset(self):
+    #     queryset = self.queryset
+    #
+    #     return queryset
+
+    # def paginate_queryset(self, queryset):
+    #     """
+    #     Return a single page of results, or `None` if pagination is disabled.
+    #     """
+    #     if self.paginator is None:
+    #         return None
+    #     return self.paginator.paginate_queryset(queryset, self.request, view=self)
     
     @extend_schema(
         summary='book search',
@@ -45,14 +68,7 @@ class BookSearchView(generics.GenericAPIView):
         ],
     )
     def get(self, request, *args, **kwargs):
-        # todo: error if book have reviews
-        # title = request.query_params['title']
-        # or
-        # title = kwargs['title']
-        # book = Book.objects.get(title=kwargs['title'])
-        # print(kwargs['title'])
-        books = Book.objects.filter(title__icontains=kwargs['title'])
-        # print("BOOKS", books)
+        books = Book.objects.filter(title__icontains=kwargs['title']).prefetch_related("reviews__author")
 
         return Response(BookSerializer(books, many=True).data, status=status.HTTP_200_OK)
 
