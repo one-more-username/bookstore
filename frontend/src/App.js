@@ -1,25 +1,46 @@
-import logo from './logo.svg';
-import './App.css';
-import {useState, useEffect} from 'react';
+import "./App.css";
+import { useState } from "react";
+// import axios from "axios";
+import { Routes, Route, useNavigate } from "react-router-dom";
+
+import Login from "./components/pages/Login";
+import Signup from "./components/pages/Signup";
+import Main from "./components/pages/Main";
+import Profile from "./components/pages/Profile";
+import ShoppingCart from "./components/pages/ShoppingCart";
 
 function App() {
-  const [data, setData] = useState(null);
+  const [token, setToken] = useState(localStorage.getItem("token")); // todo: change it
+  const navigate = useNavigate();
 
-  useEffect(() => {
-    fetch('http://localhost:8000/test/')
-      .then(res => res.json())
-      .then(data => setData(data.data));
-  })
+  const Redirect = () => {
+    return (
+      <>
+        <h1>Register or log in please</h1>
+        <button
+          onClick={() => {
+            navigate(`/login`);
+          }}
+        >
+          Login
+        </button>
+      </>
+    );
+  };
 
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <h1>An Awesome Blog </h1>
-        <h3>On Django, React, Postgres, and Docker </h3>
-
-        <p>{data}</p>
-      </header>
+      <Routes>
+        <Route path="/login" element={<Login setToken={setToken} />} />
+        <Route path="/signup" element={<Signup setToken={setToken} />} />
+        <Route path="/main" element={token ? <Main /> : <Redirect />} />
+        {/* <Route path="/main" element={<Main />} /> */}
+        <Route path="/profile" element={token ? <Profile /> : <Redirect />} />
+        <Route
+          path="/shopping-cart"
+          element={token ? <ShoppingCart /> : <Redirect />}
+        />
+      </Routes>
     </div>
   );
 }
