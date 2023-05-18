@@ -1,9 +1,9 @@
 from random import sample
 
-from django_filters import rest_framework as filters
+from django_filters import rest_framework as rest_filters
 from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import extend_schema, OpenApiParameter
-from rest_framework import viewsets, generics, status
+from rest_framework import viewsets, generics, status, filters
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated, AllowAny
 from rest_framework.response import Response
@@ -18,59 +18,32 @@ from .serializers import BookSerializer, ReviewSerializer
 # Create your views here.
 
 
-class BookSearchFilter(filters.FilterSet):
-    pass
+# class BookSearchFilter(filters.FilterSet):
+#     pass
 
 
 class BookSearchPagination(PageNumberPagination):
-    page_size = 10  # quantity of items on the page
+    page_size = 5  # quantity of items on the page
     page_size_query_params = 'page_size'
     max_page_size = 25
 
 
-class BookSearchView(generics.GenericAPIView):
+class BookSearchView(generics.ListAPIView):
     queryset = Book.objects.all()
     permission_classes = (AllowAny,)  # or (IsOwnerProfileOrReadOnly, IsAuthenticated,) ?
     serializer_class = BookSerializer
     pagination_class = BookSearchPagination
-    # filter_backends = [filters.DjangoFilterBackend]
-    # filterset_fields = ('title',)
-    # search_fields = ['title']
-    # filterset_class = BookSearchFilter
-
-    # lookup_field = 'id'
-    # lookup_url_kwarg = 'title'
-
-    # def get_queryset(self):
-    #     queryset = self.queryset
-    #
-    #     return queryset
-
-    # def paginate_queryset(self, queryset):
-    #     """
-    #     Return a single page of results, or `None` if pagination is disabled.
-    #     """
-    #     if self.paginator is None:
-    #         return None
-    #     return self.paginator.paginate_queryset(queryset, self.request, view=self)
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['title']
     
     @extend_schema(
         summary='book search',
         tags=['book'],
         request=None,
         responses={200: BookSerializer(many=True)},
-        parameters=[
-            OpenApiParameter(
-                name="title",
-                type=OpenApiTypes.STR,
-                location=OpenApiParameter.PATH
-            ),
-        ],
     )
     def get(self, request, *args, **kwargs):
-        books = Book.objects.filter(title__icontains=kwargs['title']).prefetch_related("reviews__author")
-
-        return Response(BookSerializer(books, many=True).data, status=status.HTTP_200_OK)
+        return self.list(request, *args, **kwargs)
 
 
 class BookViewSet(viewsets.ModelViewSet):

@@ -210,7 +210,5 @@ SPECTACULAR_SETTINGS = {
     'TITLE': 'Bookstore API',
     'DESCRIPTION': 'Bookstore API documentation',
     'VERSION': '1.0.0',
-    # 'SERVE_INCLUDE_SCHEMA': False,
-    # "SCHEMA_PATH_PREFIX": "/v1",
     'SCHEMA_PATH_PREFIX': r'/api/v[0-9]'
 }
