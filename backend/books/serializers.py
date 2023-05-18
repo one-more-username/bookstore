@@ -45,7 +45,7 @@ class BookSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Book
-        fields = ["id", "title", "description", "reviews", "image", "release_date", "price", "author", "reviews_quantity", "rating"]
+        fields = ["id", "title", "description", "reviews", "image", "release_date", "price", "author", "reviews_quantity", "rating", "quantity"]
         # exclude = ['quantity', ]
         # fields = "__all__"
 

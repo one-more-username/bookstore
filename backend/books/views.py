@@ -1,6 +1,5 @@
 from random import sample
 
-from django_filters import rest_framework as rest_filters
 from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import extend_schema, OpenApiParameter
 from rest_framework import viewsets, generics, status, filters
@@ -16,10 +15,6 @@ from .serializers import BookSerializer, ReviewSerializer
 
 
 # Create your views here.
-
-
-# class BookSearchFilter(filters.FilterSet):
-#     pass
 
 
 class BookSearchPagination(PageNumberPagination):
@@ -55,7 +50,7 @@ class BookViewSet(viewsets.ModelViewSet):
 class RandomBooksView(generics.ListAPIView):
     books = Book.objects.all()
     serializer_class = BookSerializer
-    permission_classes = (AllowAny,)
+    permission_classes = (IsAuthenticated,)  # AllowAny IsAuthenticated
 
     def list(self, request, *args, **kwargs):
         books = Book.objects.all()
