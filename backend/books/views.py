@@ -173,4 +173,5 @@ class RemoveFavouritesView(generics.GenericAPIView):
 
         profile.favourites.remove(book)
 
-        return Response({"Success": "Book removed from favourites"}, status=status.HTTP_200_OK)
+        # return Response({"Success": "Book removed from favourites"}, status=status.HTTP_200_OK)
+        return Response(self.get_serializer(profile).data, status=status.HTTP_200_OK)

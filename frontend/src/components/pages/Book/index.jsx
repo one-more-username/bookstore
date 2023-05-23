@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
-const Book = ({ book_id }) => {
+const Book = () => {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   const navigate = useNavigate();
+  const { book_id } = useParams();
 
   const token = localStorage.getItem("token");
 
@@ -36,7 +37,6 @@ const Book = ({ book_id }) => {
     getData();
   }, []);
 
-  console.log("book_id", data);
   return (
     <>
       {loading && <div>A moment please...</div>}

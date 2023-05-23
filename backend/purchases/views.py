@@ -72,8 +72,8 @@ class RemoveFromShoppingCartView(generics.GenericAPIView):
         shopping_cart = ShoppingCart.objects.get(owner=profile)
         shopping_cart.books_to_purchase.remove(book)
 
-        return Response({"Success": "Book removed from shopping cart"}, status=status.HTTP_200_OK)
-
+        # return Response({"Success": "Book removed from shopping cart"}, status=status.HTTP_200_OK)
+        return Response(self.get_serializer(shopping_cart).data, status=status.HTTP_200_OK)
 
 class GetShoppingCartView(generics.GenericAPIView):
     queryset = ShoppingCart.objects.all()
