@@ -3,22 +3,28 @@
   <component name="NewModuleRootManager">
     <content url="file://$MODULE_DIR$">
       <sourceFolder url="file://$MODULE_DIR$" isTestSource="false" />
-      <excludeFolder url="file://$MODULE_DIR$/venv" />
-      <excludeFolder url="file://$MODULE_DIR$/frontend/node_modules" />
-      <excludeFolder url="file://$MODULE_DIR$/data/db/pg_logical/mappings" />
+      <sourceFolder url="file://$MODULE_DIR$/backend" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/data/db/pg_logical/snapshots" />
-      <excludeFolder url="file://$MODULE_DIR$/data/db/pg_wal/archive_status" />
-      <excludeFolder url="file://$MODULE_DIR$/data/db/pg_commit_ts" />
+      <excludeFolder url="file://$MODULE_DIR$/venv" />
+      <excludeFolder url="file://$MODULE_DIR$/data/db/pg_tblspc" />
       <excludeFolder url="file://$MODULE_DIR$/data/db/pg_dynshmem" />
-      <excludeFolder url="file://$MODULE_DIR$/data/db/pg_notify" />
-      <excludeFolder url="file://$MODULE_DIR$/data/db/pg_replslot" />
       <excludeFolder url="file://$MODULE_DIR$/data/db/pg_serial" />
       <excludeFolder url="file://$MODULE_DIR$/data/db/pg_snapshots" />
-      <excludeFolder url="file://$MODULE_DIR$/data/db/pg_stat_tmp" />
-      <excludeFolder url="file://$MODULE_DIR$/data/db/pg_tblspc" />
       <excludeFolder url="file://$MODULE_DIR$/data/db/pg_twophase" />
+      <excludeFolder url="file://$MODULE_DIR$/data/db/pg_logical/mappings" />
+      <excludeFolder url="file://$MODULE_DIR$/data/db/pg_commit_ts" />
+      <excludeFolder url="file://$MODULE_DIR$/data/db/pg_stat_tmp" />
+      <excludeFolder url="file://$MODULE_DIR$/data/db/pg_replslot" />
+      <excludeFolder url="file://$MODULE_DIR$/data/db/pg_notify" />
+      <excludeFolder url="file://$MODULE_DIR$/data/db/pg_wal/archive_status" />
+      <excludeFolder url="file://$MODULE_DIR$/frontend/node_modules" />
+      <excludeFolder url="file://$MODULE_DIR$/data/db/pg_stat" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+  </component>
+  <component name="PyDocumentationSettings">
+    <option name="format" value="PLAIN" />
+    <option name="myDocStringFormat" value="Plain" />
   </component>
 </module>
