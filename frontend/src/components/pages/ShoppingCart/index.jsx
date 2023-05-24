@@ -21,7 +21,7 @@ const ShoppingCart = () => {
           "http://localhost:8000/api/v1/shopping-cart/",
           config
         );
-        setData(response.data);
+        setData(response.data.books_to_purchase);
         setError(null);
       } catch (err) {
         setError(err.message);
@@ -49,6 +49,25 @@ const ShoppingCart = () => {
     }
   };
 
+  const makePurchaseHandler = async (e) => {
+    e.stopPropagation();
+
+    try {
+      const response = await axios.get(
+        "http://localhost:8000/api/v1/shopping-cart/buy/",
+        config
+      );
+      console.log("response.data", response.data);
+      setData(response.data.books_to_purchase);
+      // setError(null);
+    } catch (err) {
+      // setError(err.message);
+      // setData(null);
+    } finally {
+      // setLoading(false);
+    }
+  };
+
   return (
     <>
       {loading && <div>A moment please...</div>}
@@ -60,6 +79,15 @@ const ShoppingCart = () => {
       {data && (
         <>
           <h2>Your shopping cart</h2>
+          <button
+            type="button"
+            // disabled={!data.length}
+            onClick={(e) => {
+              makePurchaseHandler(e);
+            }}
+          >
+            Make a purchase
+          </button>
           <div>
             {data.map((item, index) => (
               <div
@@ -67,7 +95,7 @@ const ShoppingCart = () => {
                 key={`key_${index}`}
               >
                 <h3>Title: {item.title}</h3>
-                <h3>ID: {item.id}</h3>
+                {/* <h3>ID: {item.id}</h3> */}
                 <img src={item.image} alt="book cover" />
                 <p>Price: {item.price} rub</p>
                 <p>Author: {item.author}</p>

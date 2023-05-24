@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import Book from "../Book";
 import "./styles.scss";
 
 const Main = () => {
@@ -57,7 +56,7 @@ const Main = () => {
   const addToShoppingCartHandler = async (book_id) => {
     try {
       const response = await axios.get(
-        `http://localhost:8000//api/v1/shopping-cart/add-book/${book_id}/`,
+        `http://localhost:8000/api/v1/shopping-cart/add-book/${book_id}/`,
         config
       );
       console.log("response.data", response.data);

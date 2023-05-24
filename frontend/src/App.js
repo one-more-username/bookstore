@@ -10,6 +10,7 @@ import ShoppingCart from "./components/pages/ShoppingCart";
 import Book from "./components/pages/Book";
 import Search from "./components/pages/Search";
 import Header from "./components/ui/Header";
+import AddReview from "./components/pages/AddReview";
 
 function App() {
   // const [token, setToken] = useState(localStorage.getItem("token")); // todo: change it
@@ -25,6 +26,7 @@ function App() {
           <Route path="/profile" element={<Profile />} />
           <Route path="/shopping-cart" element={<ShoppingCart />} />
           <Route path="/book/:book_id" element={<Book />} />
+          <Route path="/book/:book_id/add-review/" element={<AddReview />} />
           <Route path="/book/search" element={<Search />} />
           <Route path="/main" element={<Navigate to={"/"} />} />
         </Routes>

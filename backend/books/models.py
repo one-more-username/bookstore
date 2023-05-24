@@ -17,7 +17,6 @@ class Book(models.Model):
     release_date = models.DateField()
     price = models.IntegerField()
     author = models.CharField(max_length=30)
-    reviews_quantity = models.IntegerField(default=0)
     quantity = models.PositiveSmallIntegerField(default=100)
     # favourite_by = models.ManyToManyField(User, default=None, related_name='favourites')
 

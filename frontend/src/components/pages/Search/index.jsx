@@ -19,6 +19,8 @@ const Search = () => {
   ) => {
     e.preventDefault();
 
+    setLoading(true);
+
     try {
       const response = await axios.get(url_api);
       setData(response.data.results);
@@ -27,6 +29,7 @@ const Search = () => {
         next: response.data.next,
       });
       setError(null);
+      setLoading(false);
     } catch (err) {
       setError(err.message);
       setData(null);
@@ -94,6 +97,7 @@ const Search = () => {
               <p>Price: {item.price} rub</p>
               <p>Author: {item.author}</p>
               <p>Reviews: {item.reviews_quantity}</p>
+              <p>Rating: {item.rating}</p>
             </div>
           ))}
         </div>

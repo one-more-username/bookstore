@@ -1,5 +1,6 @@
 from random import sample
 
+from django.db.models import Count, Case, When, IntegerField, Avg
 from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import extend_schema, OpenApiParameter
 from rest_framework import viewsets, generics, status, filters
@@ -24,7 +25,10 @@ class BookSearchPagination(PageNumberPagination):
 
 
 class BookSearchView(generics.ListAPIView):
-    queryset = Book.objects.all()
+    queryset = Book.objects.annotate(
+        reviews_quantity=Count(Case(When(reviews__isnull=False, then=1), output_field=IntegerField())),
+        rating=Avg("reviews__rating")
+    )
     permission_classes = (AllowAny,)  # or (IsOwnerProfileOrReadOnly, IsAuthenticated,) ?
     serializer_class = BookSerializer
     pagination_class = BookSearchPagination
@@ -42,24 +46,34 @@ class BookSearchView(generics.ListAPIView):
 
 
 class BookViewSet(viewsets.ModelViewSet):
-    queryset = Book.objects.all()
+    queryset = Book.objects.annotate(
+        reviews_quantity=Count(Case(When(reviews__isnull=False, then=1), output_field=IntegerField())),
+        rating=Avg("reviews__rating")
+    )
     serializer_class = BookSerializer
     permission_classes = (IsAuthenticatedOrReadOnly,)
 
 
 class RandomBooksView(generics.ListAPIView):
-    books = Book.objects.all()
+    books = Book.objects.annotate(
+        reviews_quantity=Count(Case(When(reviews__isnull=False, then=1), output_field=IntegerField())),
+        rating=Avg("reviews__rating")
+    )
     serializer_class = BookSerializer
-    permission_classes = (IsAuthenticated,)  # AllowAny IsAuthenticated
+    permission_classes = (AllowAny,)  # AllowAny IsAuthenticated
 
     def list(self, request, *args, **kwargs):
         books = Book.objects.all()
+        # books = Book.objects.order_by('?')[:10]  # todo: optimize?
         random_books = sample(self.get_serializer(books, many=True).data, 10)
         return Response(random_books)
 
 
 class AddReviewView(generics.GenericAPIView):
-    queryset = Book.objects.all()
+    queryset = Book.objects.annotate(
+        reviews_quantity=Count(Case(When(reviews__isnull=False, then=1), output_field=IntegerField())),
+        rating=Avg("reviews__rating")
+    )
     serializer_class = ReviewSerializer
     lookup_field = 'id'
     lookup_url_kwarg = 'book_id'
@@ -69,7 +83,7 @@ class AddReviewView(generics.GenericAPIView):
         summary='add review for the book',
         tags=['reviews'],
         request=ReviewSerializer,
-        responses={200: {"Success": "Review added"}},
+        responses={200: ReviewSerializer},
         parameters=[
             OpenApiParameter(
                 name="book_id",
@@ -89,11 +103,14 @@ class AddReviewView(generics.GenericAPIView):
         )
         review.save()
 
-        return Response({"Success": "Review added"}, status=status.HTTP_200_OK)
+        return Response(ReviewSerializer, status=status.HTTP_200_OK)
 
 
 class FavouritesView(generics.GenericAPIView):
-    queryset = Book.objects.all()
+    queryset = Book.objects.annotate(
+        reviews_quantity=Count(Case(When(reviews__isnull=False, then=1), output_field=IntegerField())),
+        rating=Avg("reviews__rating")
+    )
     serializer_class = ProfileSerializer
     permission_classes = (IsOwnerProfileOrReadOnly, IsAuthenticated,)
 
@@ -115,7 +132,10 @@ class FavouritesView(generics.GenericAPIView):
 
 
 class AddFavouritesView(generics.GenericAPIView):
-    queryset = Book.objects.all()
+    queryset = Book.objects.annotate(
+        reviews_quantity=Count(Case(When(reviews__isnull=False, then=1), output_field=IntegerField())),
+        rating=Avg("reviews__rating")
+    )
     serializer_class = ProfileSerializer
     lookup_field = 'id'
     lookup_url_kwarg = 'book_id'
@@ -144,7 +164,10 @@ class AddFavouritesView(generics.GenericAPIView):
 
 
 class RemoveFavouritesView(generics.GenericAPIView):
-    queryset = Book.objects.all()
+    queryset = Book.objects.annotate(
+        reviews_quantity=Count(Case(When(reviews__isnull=False, then=1), output_field=IntegerField())),
+        rating=Avg("reviews__rating")
+    )
     lookup_field = 'id'
     lookup_url_kwarg = 'book_id'
     serializer_class = ProfileSerializer
@@ -173,5 +196,4 @@ class RemoveFavouritesView(generics.GenericAPIView):
 
         profile.favourites.remove(book)
 
-        # return Response({"Success": "Book removed from favourites"}, status=status.HTTP_200_OK)
         return Response(self.get_serializer(profile).data, status=status.HTTP_200_OK)

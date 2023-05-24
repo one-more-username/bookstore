@@ -1,3 +1,4 @@
+from django.db.models import Prefetch
 from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import extend_schema, OpenApiParameter
 from rest_framework import generics, status
@@ -5,7 +6,6 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from books.models import Book
-from books.serializers import BookSerializer
 from users.models import Profile
 from users.permissions import IsOwnerProfileOrReadOnly
 from .models import ShoppingCart
@@ -72,8 +72,8 @@ class RemoveFromShoppingCartView(generics.GenericAPIView):
         shopping_cart = ShoppingCart.objects.get(owner=profile)
         shopping_cart.books_to_purchase.remove(book)
 
-        # return Response({"Success": "Book removed from shopping cart"}, status=status.HTTP_200_OK)
         return Response(self.get_serializer(shopping_cart).data, status=status.HTTP_200_OK)
+
 
 class GetShoppingCartView(generics.GenericAPIView):
     queryset = ShoppingCart.objects.all()
@@ -84,16 +84,14 @@ class GetShoppingCartView(generics.GenericAPIView):
         summary='get shopping cart for current user',
         tags=['shopping cart'],
         request=None,
-        responses={200: BookSerializer(many=True)},
+        responses={200: ShoppingCartSerializer},
     )
     def get(self, request, *args, **kwargs):
         profile = Profile.objects.get(user=request.user.id)
 
         shopping_cart = ShoppingCart.objects.get(owner=profile)
 
-        books_to_purchase = shopping_cart.books_to_purchase.all().values()
-
-        return Response(BookSerializer(books_to_purchase, many=True).data, status=status.HTTP_200_OK)
+        return Response(self.get_serializer(shopping_cart).data, status=status.HTTP_200_OK)
 
 
 class MakePurchaseView(generics.GenericAPIView):
@@ -117,4 +115,3 @@ class MakePurchaseView(generics.GenericAPIView):
         shopping_cart.books_to_purchase.clear()
 
         return Response({'Success': 'Purchase completed'}, status=status.HTTP_200_OK)
-

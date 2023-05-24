@@ -59,6 +59,7 @@ const Book = () => {
             <p>Price: {data.price} rub</p>
             <p>Author: {data.author}</p>
             <p>Reviews: {data.reviews_quantity}</p>
+            <p>Rating: {data.rating}</p>
           </div>
         )}
       </div>

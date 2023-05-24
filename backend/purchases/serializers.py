@@ -12,3 +12,10 @@ class ShoppingCartSerializer(serializers.ModelSerializer):
     class Meta:
         model = ShoppingCart
         fields = "__all__"
+        # todo: validation for existing books in shopping cart
+        # validators = [
+        #     UniqueTogetherValidator(
+        #         queryset=Review.objects.all(),
+        #         fields=['author', 'book']
+        #     )
+        # ]
