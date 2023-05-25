@@ -1,7 +1,7 @@
 import React from "react";
 import { Route, Navigate } from "react-router-dom";
-// import { connect } from "react-redux";
 
+// todo: remove it?
 const PrivateRoute = ({ component: Component, ...rest }) => {
   return (
     <Route
@@ -25,4 +25,4 @@ const PrivateRoute = ({ component: Component, ...rest }) => {
   );
 };
 
-export default PrivateRoute;
+// export default PrivateRoute;

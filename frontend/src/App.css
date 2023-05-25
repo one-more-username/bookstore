@@ -1,7 +1,9 @@
 .App {
   text-align: center;
+  height: 1200px;
 }
 
 .body_wrapper {
-  padding-top: 120px;
+  padding: 120px 0;
+  min-height: 90%;
 }

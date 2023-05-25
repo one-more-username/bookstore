@@ -1,14 +1,17 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import checkAuth from "../../utils/jwt";
 import "./styles.scss";
 
 const Main = () => {
+  const [isAuthorized, setIsAuthorized] = useState(false);
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   const token = localStorage.getItem("token");
+  const refresh = localStorage.getItem("refresh");
 
   const navigate = useNavigate();
 
@@ -22,8 +25,7 @@ const Main = () => {
     const getData = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:8000/api/v1/book/random/",
-          config
+          "http://localhost:8000/api/v1/book/random/"
         );
         setData(response.data);
         setError(null);
@@ -34,6 +36,37 @@ const Main = () => {
         setLoading(false);
       }
     };
+
+    // const checkAuth = async () => {
+    //   try {
+    //     await axios.post("http://localhost:8000/token/verify/", {
+    //       token: token,
+    //     });
+    //     setError(null);
+    //     setIsAuthorized(true);
+    //   } catch (err) {
+    //     setError(err.message);
+    //     setData(null);
+    //   } finally {
+    //     setLoading(false);
+    //   }
+
+    //   if (!isAuthorized) {
+    //     try {
+    //       const response = await axios.post(
+    //         "http://localhost:8000/token/refresh/",
+    //         {
+    //           token: refresh,
+    //         }
+    //       );
+    //       console.log("response.data.refresh", response.data.refresh);
+    //     } catch (err) {
+    //     } finally {
+    //     }
+    //   }
+    // };
+
+    // checkAuth();
     getData();
   }, []);
 

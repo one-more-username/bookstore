@@ -43,6 +43,10 @@ const Profile = () => {
 
   // purchase history
 
+  const handleClick = (book_id) => {
+    navigate(`/book/${book_id}`);
+  };
+
   const removeFromFavouritesHandler = async (book_id) => {
     try {
       const response = await axios.get(
@@ -59,7 +63,7 @@ const Profile = () => {
       setLoading(false);
     }
   };
-
+  // todo: problem when render purchase history and favourites. Try to render it at different time
   return (
     <div>
       {loading && <div>A moment please...</div>}
@@ -75,7 +79,7 @@ const Profile = () => {
             <div className="books_wrapper">
               {purchaseHistory.map((item, index) => (
                 <div
-                  // onClick={() => handleClick(item.id)}
+                  onClick={() => handleClick(item.id)}
                   className="book_wrapper"
                   key={`key_${index}`}
                 >
@@ -84,7 +88,6 @@ const Profile = () => {
                   <img src={item.image} alt="book cover" />
                   <p>Price: {item.price} rub</p>
                   <p>Author: {item.author}</p>
-                  <p>Reviews: {item.reviews_quantity}</p>
                   <button
                     type="button"
                     // disabled={item.is_favourite}
@@ -105,7 +108,7 @@ const Profile = () => {
             <div className="books_wrapper">
               {favourites.map((item, index) => (
                 <div
-                  // onClick={() => handleClick(item.id)}
+                  onClick={() => handleClick(item.id)}
                   className="book_wrapper"
                   key={`key_${index}`}
                 >

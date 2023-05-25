@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
+import "./styles.scss";
 
 const Book = () => {
   const [data, setData] = useState(null);
@@ -37,6 +38,30 @@ const Book = () => {
     getData();
   }, []);
 
+  const addToFavouritesHandler = async (book_id) => {
+    try {
+      const response = await axios.get(
+        `http://localhost:8000/api/v1/book/${book_id}/add-favourite/`,
+        config
+      );
+      console.log("response.data", response.data);
+    } catch (err) {
+      console.log("error", err);
+    }
+  };
+
+  const addToShoppingCartHandler = async (book_id) => {
+    try {
+      const response = await axios.get(
+        `http://localhost:8000/api/v1/shopping-cart/add-book/${book_id}/`,
+        config
+      );
+      console.log("response.data", response.data);
+    } catch (err) {
+      console.log("error", err);
+    }
+  };
+
   return (
     <>
       {loading && <div>A moment please...</div>}
@@ -50,16 +75,36 @@ const Book = () => {
       )}
       <div className="book_detail">
         {data && (
-          <div
-            onClick={() => console.log("data", data)}
-            className="book_wrapper"
-          >
+          <div className="book_wrapper">
             <h3>Title: {data.title}</h3>
             <img src={data.image} alt="book cover" />
             <p>Price: {data.price} rub</p>
             <p>Author: {data.author}</p>
             <p>Reviews: {data.reviews_quantity}</p>
-            <p>Rating: {data.rating}</p>
+            <p>Rating: {data.rating ? data.rating : 0}</p>
+            <p>Description: {data.description}</p>
+            <div className="buttons">
+              <button
+                type="button"
+                // disabled={item.is_favourite}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  addToFavouritesHandler(data.id);
+                }}
+              >
+                Add to favourites
+              </button>
+              <button
+                type="button"
+                // disabled={item.is_favourite}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  addToShoppingCartHandler(data.id);
+                }}
+              >
+                Add to shopping cart
+              </button>
+            </div>
           </div>
         )}
       </div>

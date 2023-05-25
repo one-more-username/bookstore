@@ -1,17 +1,28 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import "./styles.scss";
 
 const ShoppingCart = () => {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [totalPrice, setTotalPrice] = useState(0);
 
   const token = localStorage.getItem("token");
+
+  const navigate = useNavigate();
 
   const config = {
     headers: {
       Authorization: `Bearer ${token}`,
     },
+  };
+
+  const calculateTotalPrice = (arr) => {
+    let result = 0;
+    arr.map((item) => (result += item.price));
+    return result;
   };
 
   useEffect(() => {
@@ -22,6 +33,7 @@ const ShoppingCart = () => {
           config
         );
         setData(response.data.books_to_purchase);
+        setTotalPrice(calculateTotalPrice(response.data.books_to_purchase));
         setError(null);
       } catch (err) {
         setError(err.message);
@@ -58,7 +70,8 @@ const ShoppingCart = () => {
         config
       );
       console.log("response.data", response.data);
-      setData(response.data.books_to_purchase);
+      setData([]);
+      setTotalPrice(0);
       // setError(null);
     } catch (err) {
       // setError(err.message);
@@ -66,6 +79,10 @@ const ShoppingCart = () => {
     } finally {
       // setLoading(false);
     }
+  };
+
+  const handleClick = (book_id) => {
+    navigate(`/book/${book_id}`);
   };
 
   return (
@@ -79,30 +96,30 @@ const ShoppingCart = () => {
       {data && (
         <>
           <h2>Your shopping cart</h2>
+          <p>Total price for current purchase: {totalPrice} rub</p>
           <button
             type="button"
-            // disabled={!data.length}
+            disabled={!data.length}
             onClick={(e) => {
               makePurchaseHandler(e);
             }}
           >
             Make a purchase
           </button>
-          <div>
+          <div className="books_wrapper">
             {data.map((item, index) => (
               <div
-                // onClick={() => handleClick(item.id)}
+                className="book_wrapper"
+                onClick={() => handleClick(item.id)}
                 key={`key_${index}`}
               >
                 <h3>Title: {item.title}</h3>
-                {/* <h3>ID: {item.id}</h3> */}
                 <img src={item.image} alt="book cover" />
                 <p>Price: {item.price} rub</p>
                 <p>Author: {item.author}</p>
                 <p>Reviews: {item.reviews_quantity}</p>
                 <button
                   type="button"
-                  // disabled={item.is_favourite}
                   onClick={(e) => {
                     e.stopPropagation();
                     removeFromShoppingCartHandler(item.id);

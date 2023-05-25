@@ -1,5 +1,5 @@
 import "./App.css";
-// import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 
 import Login from "./components/pages/Login";
@@ -10,10 +10,18 @@ import ShoppingCart from "./components/pages/ShoppingCart";
 import Book from "./components/pages/Book";
 import Search from "./components/pages/Search";
 import Header from "./components/ui/Header";
+import Footer from "./components/ui/Footer";
 import AddReview from "./components/pages/AddReview";
 
 function App() {
   // const [token, setToken] = useState(localStorage.getItem("token")); // todo: change it
+  // const [refresh, setRefresh] = useState(localStorage.getItem("refresh"));
+
+  // useEffect(() => {
+  //   localStorage.getItem("token");
+
+  //   return () => {};
+  // }, []);
 
   return (
     <div className="App">
@@ -31,7 +39,7 @@ function App() {
           <Route path="/main" element={<Navigate to={"/"} />} />
         </Routes>
       </div>
-      <footer>Footer</footer>
+      <Footer />
     </div>
   );
 }
