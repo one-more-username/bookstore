@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import "./styles.scss";
 
 const Search = () => {
   const [searchedTitle, setSearchedTitle] = useState("");
@@ -54,7 +55,7 @@ const Search = () => {
             onChange={(e) => setSearchedTitle(e.target.value)}
           />
         </label>
-        <div>
+        <div className="buttons_wrapper">
           <button
             type="button"
             disabled={!pagination.previous}

@@ -1,3 +1,31 @@
 .profile_wrapper {
   display: flex;
+
+  .content_wrapper {
+    display: flex;
+    flex-direction: column;
+    width: 50%;
+
+    .purchased_books_wrapper,
+    .favourites_books_wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      row-gap: 20px;
+
+      .purchased_book_wrapper,
+      .favourite_book_wrapper {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        border: 2px solid black;
+        border-radius: 50px;
+        padding: 20px 40px;
+        width: 40%;
+        min-height: 428px;
+        justify-content: space-between;
+      }
+    }
+  }
 }

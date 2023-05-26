@@ -27,7 +27,6 @@ const Profile = () => {
           "http://localhost:8000/api/v1/book/favourites/",
           config
         );
-        // console.log("purchase_history", response.data.purchase_history);
         setFavourites(response.data.favourites);
         setPurchaseHistory(response.data.purchase_history);
         setError(null);
@@ -40,8 +39,6 @@ const Profile = () => {
     };
     getData();
   }, []);
-
-  // purchase history
 
   const handleClick = (book_id) => {
     navigate(`/book/${book_id}`);
@@ -63,7 +60,7 @@ const Profile = () => {
       setLoading(false);
     }
   };
-  // todo: problem when render purchase history and favourites. Try to render it at different time
+
   return (
     <div>
       {loading && <div>A moment please...</div>}
@@ -74,13 +71,13 @@ const Profile = () => {
       )}
       {favourites && (
         <div className="profile_wrapper">
-          <div>
+          <div className="content_wrapper">
             <h2>Your purchase history</h2>
-            <div className="books_wrapper">
+            <div className="purchased_books_wrapper">
               {purchaseHistory.map((item, index) => (
                 <div
                   onClick={() => handleClick(item.id)}
-                  className="book_wrapper"
+                  className="purchased_book_wrapper"
                   key={`key_${index}`}
                 >
                   <h3>Title: {item.title}</h3>
@@ -90,10 +87,8 @@ const Profile = () => {
                   <p>Author: {item.author}</p>
                   <button
                     type="button"
-                    // disabled={item.is_favourite}
                     onClick={(e) => {
                       e.stopPropagation();
-                      // removeFromFavouritesHandler(item.id);
                       navigate(`/book/${item.id}/add-review/`);
                     }}
                   >
@@ -103,13 +98,13 @@ const Profile = () => {
               ))}
             </div>
           </div>
-          <div>
+          <div className="content_wrapper">
             <h2>Your favourites</h2>
-            <div className="books_wrapper">
+            <div className="favourites_books_wrapper">
               {favourites.map((item, index) => (
                 <div
                   onClick={() => handleClick(item.id)}
-                  className="book_wrapper"
+                  className="favourite_book_wrapper"
                   key={`key_${index}`}
                 >
                   <h3>Title: {item.title}</h3>
@@ -120,7 +115,6 @@ const Profile = () => {
                   <p>Reviews: {item.reviews_quantity}</p>
                   <button
                     type="button"
-                    // disabled={item.is_favourite}
                     onClick={(e) => {
                       e.stopPropagation();
                       removeFromFavouritesHandler(item.id);

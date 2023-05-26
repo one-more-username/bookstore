@@ -1,13 +1,12 @@
 from django.contrib.auth import get_user_model
 from django.db import transaction
-from rest_framework import viewsets, generics, status
-from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework import generics, status
+from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 
 from purchases.models import ShoppingCart
 from .models import Profile
-from .permissions import IsOwnerProfileOrReadOnly
-from .serializers import ProfileSerializer, UserRegistrationSerializer
+from .serializers import UserRegistrationSerializer
 
 User = get_user_model()
 
@@ -19,7 +18,7 @@ class UserRegistrationView(generics.GenericAPIView):
     permission_classes = (AllowAny, )
     serializer_class = UserRegistrationSerializer
 
-    @transaction.atomic  # does it need at decorator extended schema?
+    @transaction.atomic
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)

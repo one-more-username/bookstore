@@ -12,7 +12,6 @@ User = get_user_model()
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
     favourites = models.ManyToManyField(Book, blank=True, default=None)
-    # books_to_purchase = models.ManyToManyField(Book, default=None)
     purchase_history = models.ManyToManyField(Book, blank=True, default=None, related_name='purchase_history')
 
     class Meta:

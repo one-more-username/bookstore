@@ -27,6 +27,7 @@ const Book = () => {
           config
         );
         setData(response.data);
+        console.log("response.data", response.data.reviews);
         setError(null);
       } catch (err) {
         setError(err.message);
@@ -75,36 +76,56 @@ const Book = () => {
       )}
       <div className="book_detail">
         {data && (
-          <div className="book_wrapper">
-            <h3>Title: {data.title}</h3>
-            <img src={data.image} alt="book cover" />
-            <p>Price: {data.price} rub</p>
-            <p>Author: {data.author}</p>
-            <p>Reviews: {data.reviews_quantity}</p>
-            <p>Rating: {data.rating ? data.rating : 0}</p>
-            <p>Description: {data.description}</p>
-            <div className="buttons">
-              <button
-                type="button"
-                // disabled={item.is_favourite}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  addToFavouritesHandler(data.id);
-                }}
-              >
-                Add to favourites
-              </button>
-              <button
-                type="button"
-                // disabled={item.is_favourite}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  addToShoppingCartHandler(data.id);
-                }}
-              >
-                Add to shopping cart
-              </button>
+          <div className="wrapper">
+            <div className="book_wrapper">
+              <h3>Title: {data.title}</h3>
+              <img src={data.image} alt="book cover" />
+              <p>Price: {data.price} rub</p>
+              <p>Author: {data.author}</p>
+              <p>Reviews: {data.reviews_quantity}</p>
+              <p>Rating: {data.rating ? data.rating : 0}</p>
+              <p>Description: {data.description}</p>
+              <div className="buttons">
+                <button
+                  type="button"
+                  // disabled={item.is_favourite}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    addToFavouritesHandler(data.id);
+                  }}
+                >
+                  Add to favourites
+                </button>
+                <button
+                  type="button"
+                  // disabled={item.is_favourite}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    addToShoppingCartHandler(data.id);
+                  }}
+                >
+                  Add to shopping cart
+                </button>
+              </div>
             </div>
+            {data.reviews && (
+              <>
+                <h3>Detailed reviews</h3>
+                <div className="reviews_wrapper">
+                  {data.reviews.map((item, index) => {
+                    return (
+                      <div
+                        className="review_wrapper"
+                        key={`review_${index + 1}`}
+                      >
+                        <p>{item.review}</p>
+                        <p>{item.rating}</p>
+                      </div>
+                    );
+                  })}
+                </div>
+              </>
+            )}
           </div>
         )}
       </div>

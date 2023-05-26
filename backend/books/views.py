@@ -29,7 +29,7 @@ class BookSearchView(generics.ListAPIView):
         reviews_quantity=Count(Case(When(reviews__isnull=False, then=1), output_field=IntegerField())),
         rating=Avg("reviews__rating")
     )
-    permission_classes = (AllowAny,)  # or (IsOwnerProfileOrReadOnly, IsAuthenticated,) ?
+    permission_classes = (AllowAny,)
     serializer_class = BookSerializer
     pagination_class = BookSearchPagination
     filter_backends = [filters.SearchFilter]
@@ -60,11 +60,11 @@ class RandomBooksView(generics.ListAPIView):
         rating=Avg("reviews__rating")
     )
     serializer_class = BookSerializer
-    permission_classes = (AllowAny,)  # AllowAny IsAuthenticated
+    permission_classes = (AllowAny,)
 
     def list(self, request, *args, **kwargs):
         books = Book.objects.all()
-        # books = Book.objects.order_by('?')[:10]  # todo: optimize?
+        # books = Book.objects.order_by('?')[:10]  # todo: does it need optimize?
         random_books = sample(self.get_serializer(books, many=True).data, 10)
         return Response(random_books)
 
