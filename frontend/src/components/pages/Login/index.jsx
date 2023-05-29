@@ -9,6 +9,7 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     try {
       await axios
         .post("http://localhost:8000/token/", {
@@ -48,7 +49,14 @@ const Login = () => {
           />
         </label>
         <div>
-          <button type="submit">Submit</button>
+          <button
+            style={{
+              marginTop: "20px",
+            }}
+            type="submit"
+          >
+            Submit
+          </button>
         </div>
       </form>
     </div>

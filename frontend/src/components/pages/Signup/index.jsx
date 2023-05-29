@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
-const Signup = ({ setToken }) => {
+const Signup = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [password2, setPassword2] = useState("");
@@ -74,7 +74,14 @@ const Signup = ({ setToken }) => {
           />
         </label>
         <div>
-          <button type="submit">Submit</button>
+          <button
+            style={{
+              marginTop: "20px",
+            }}
+            type="submit"
+          >
+            Submit
+          </button>
         </div>
       </form>
       {passwordError && <p>{passwordError}</p>}

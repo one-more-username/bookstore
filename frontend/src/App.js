@@ -1,6 +1,5 @@
-import "./App.css";
-import { useEffect, useState } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
+import "./App.css";
 
 import Login from "./components/pages/Login";
 import Signup from "./components/pages/Signup";
@@ -14,15 +13,6 @@ import Footer from "./components/ui/Footer";
 import AddReview from "./components/pages/AddReview";
 
 function App() {
-  // const [token, setToken] = useState(localStorage.getItem("token")); // todo: change it
-  // const [refresh, setRefresh] = useState(localStorage.getItem("refresh"));
-
-  // useEffect(() => {
-  //   localStorage.getItem("token");
-
-  //   return () => {};
-  // }, []);
-
   return (
     <div className="App">
       <Header />
