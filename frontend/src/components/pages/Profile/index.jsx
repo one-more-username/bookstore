@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { Snackbar } from "@mui/material";
 import "./styles.scss";
 
 const Profile = () => {
@@ -8,10 +9,20 @@ const Profile = () => {
   const [purchaseHistory, setPurchaseHistory] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [sbOpen, setSbOpen] = useState(false);
+  const [sbMessage, setSbMessage] = useState("");
 
   const navigate = useNavigate();
 
   const token = localStorage.getItem("token");
+
+  const snackBarHandleClose = (e, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+
+    setSbOpen(false);
+  };
 
   const config = {
     headers: {
@@ -62,6 +73,16 @@ const Profile = () => {
 
   return (
     <div>
+      <Snackbar
+        anchorOrigin={{
+          vertical: "top",
+          horizontal: "center",
+        }}
+        open={sbOpen}
+        autoHideDuration={2500}
+        onClose={snackBarHandleClose}
+        message={sbMessage}
+      />
       {loading && <div>A moment please...</div>}
       {error && (
         <>
@@ -128,6 +149,8 @@ const Profile = () => {
                     onClick={(e) => {
                       e.stopPropagation();
                       removeFromFavouritesHandler(item.id);
+                      setSbMessage("Removed from favourites");
+                      setSbOpen(true);
                     }}
                   >
                     Remove from favourites

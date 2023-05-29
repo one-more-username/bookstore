@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { Snackbar } from "@mui/material";
 import "./styles.scss";
 
 const ShoppingCart = () => {
@@ -8,8 +9,18 @@ const ShoppingCart = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [totalPrice, setTotalPrice] = useState(0);
+  const [sbOpen, setSbOpen] = useState(false);
+  const [sbMessage, setSbMessage] = useState("");
 
   const token = localStorage.getItem("token");
+
+  const snackBarHandleClose = (e, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+
+    setSbOpen(false);
+  };
 
   const navigate = useNavigate();
 
@@ -83,6 +94,16 @@ const ShoppingCart = () => {
 
   return (
     <>
+      <Snackbar
+        anchorOrigin={{
+          vertical: "top",
+          horizontal: "center",
+        }}
+        open={sbOpen}
+        autoHideDuration={2500}
+        onClose={snackBarHandleClose}
+        message={sbMessage}
+      />
       {loading && <div>A moment please...</div>}
       {error && (
         <>
@@ -98,6 +119,8 @@ const ShoppingCart = () => {
             disabled={!data.length}
             onClick={(e) => {
               makePurchaseHandler(e);
+              setSbMessage("Purchase successful");
+              setSbOpen(true);
             }}
           >
             Make a purchase
@@ -125,6 +148,8 @@ const ShoppingCart = () => {
                   onClick={(e) => {
                     e.stopPropagation();
                     removeFromShoppingCartHandler(item.id);
+                    setSbMessage("Removed from shopping cart");
+                    setSbOpen(true);
                   }}
                 >
                   Remove from shopping cart

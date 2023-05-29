@@ -1,17 +1,28 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { Snackbar } from "@mui/material";
 import "./styles.scss";
 
 const Main = () => {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [sbOpen, setSbOpen] = useState(false);
+  const [sbMessage, setSbMessage] = useState("");
 
   const token = localStorage.getItem("token");
   // const refresh = localStorage.getItem("refresh");
 
   const navigate = useNavigate();
+
+  const snackBarHandleClose = (e, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+
+    setSbOpen(false);
+  };
 
   const config = {
     headers: {
@@ -67,6 +78,16 @@ const Main = () => {
 
   return (
     <div className="main_wrapper">
+      <Snackbar
+        anchorOrigin={{
+          vertical: "top",
+          horizontal: "center",
+        }}
+        open={sbOpen}
+        autoHideDuration={2500}
+        onClose={snackBarHandleClose}
+        message={sbMessage}
+      />
       {loading && <div>A moment please...</div>}
       {error && (
         <>
@@ -102,6 +123,8 @@ const Main = () => {
                 onClick={(e) => {
                   e.stopPropagation();
                   addToFavouritesHandler(item.id);
+                  setSbMessage("Added to favourites");
+                  setSbOpen(true);
                 }}
               >
                 Add to favourites
@@ -112,6 +135,8 @@ const Main = () => {
                 onClick={(e) => {
                   e.stopPropagation();
                   addToShoppingCartHandler(item.id);
+                  setSbMessage("Added to shopping cart");
+                  setSbOpen(true);
                 }}
               >
                 Add to shopping cart

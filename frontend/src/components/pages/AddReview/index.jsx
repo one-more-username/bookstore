@@ -1,17 +1,26 @@
 import React, { useState } from "react";
 import { useParams } from "react-router-dom";
+import { Snackbar } from "@mui/material";
 import axios from "axios";
 import "./styles.scss";
 
 const AddReview = () => {
   const [review, setReview] = useState("");
   const [rating, setRating] = useState("");
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [sbOpen, setSbOpen] = useState(false);
+  const [sbMessage, setSbMessage] = useState("");
 
   const { book_id } = useParams();
 
   const token = localStorage.getItem("token");
+
+  const snackBarHandleClose = (e, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+
+    setSbOpen(false);
+  };
 
   const config = {
     headers: {
@@ -28,26 +37,23 @@ const AddReview = () => {
         config
       );
       console.log("response.data", response.data);
-      // setFavourites(response.data.favourites);
-      setError(null);
     } catch (err) {
       console.log("err", err);
-      setError(err.message);
-      // setFavourites(null);
-    } finally {
-      setLoading(false);
     }
   };
 
   return (
     <div>
-      {/* Add Review */}
-      {/* {loading && <div>A moment please...</div>}
-      {error && (
-        <>
-          <div>{`There is a problem fetching the data - ${error}`}</div>
-        </>
-      )} */}
+      <Snackbar
+        anchorOrigin={{
+          vertical: "top",
+          horizontal: "center",
+        }}
+        open={sbOpen}
+        autoHideDuration={2500}
+        onClose={snackBarHandleClose}
+        message={sbMessage}
+      />
       <form onSubmit={handleSubmit}>
         <label>
           <p>Review text</p>
@@ -66,7 +72,15 @@ const AddReview = () => {
           />
         </label>
         <div>
-          <button type="submit">Add review</button>
+          <button
+            type="submit"
+            onClick={() => {
+              setSbMessage("Review added");
+              setSbOpen(true);
+            }}
+          >
+            Add review
+          </button>
         </div>
       </form>
     </div>
