@@ -72,12 +72,8 @@ const ShoppingCart = () => {
       console.log("response.data", response.data);
       setData([]);
       setTotalPrice(0);
-      // setError(null);
     } catch (err) {
-      // setError(err.message);
-      // setData(null);
-    } finally {
-      // setLoading(false);
+      console.log("err", err);
     }
   };
 
@@ -113,7 +109,13 @@ const ShoppingCart = () => {
                 onClick={() => handleClick(item.id)}
                 key={`key_${index}`}
               >
-                <h3>Title: {item.title}</h3>
+                <h3
+                  onClick={(e) => {
+                    e.stopPropagation();
+                  }}
+                >
+                  Title: {item.title}
+                </h3>
                 <img src={item.image} alt="book cover" />
                 <p>Price: {item.price} rub</p>
                 <p>Author: {item.author}</p>

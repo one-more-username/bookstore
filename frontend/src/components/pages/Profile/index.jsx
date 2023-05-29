@@ -6,7 +6,6 @@ import "./styles.scss";
 const Profile = () => {
   const [favourites, setFavourites] = useState(null);
   const [purchaseHistory, setPurchaseHistory] = useState(null);
-  // const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -80,8 +79,13 @@ const Profile = () => {
                   className="purchased_book_wrapper"
                   key={`key_${index}`}
                 >
-                  <h3>Title: {item.title}</h3>
-                  <h3>ID: {item.id}</h3>
+                  <h3
+                    onClick={(e) => {
+                      e.stopPropagation();
+                    }}
+                  >
+                    Title: {item.title}
+                  </h3>
                   <img src={item.image} alt="book cover" />
                   <p>Price: {item.price} rub</p>
                   <p>Author: {item.author}</p>
@@ -107,12 +111,18 @@ const Profile = () => {
                   className="favourite_book_wrapper"
                   key={`key_${index}`}
                 >
-                  <h3>Title: {item.title}</h3>
-                  <h3>ID: {item.id}</h3>
+                  <h3
+                    onClick={(e) => {
+                      e.stopPropagation();
+                    }}
+                  >
+                    Title: {item.title}
+                  </h3>
                   <img src={item.image} alt="book cover" />
                   <p>Price: {item.price} rub</p>
                   <p>Author: {item.author}</p>
                   <p>Reviews: {item.reviews_quantity}</p>
+                  <p>Rating: {item.rating}</p>
                   <button
                     type="button"
                     onClick={(e) => {

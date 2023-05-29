@@ -93,12 +93,18 @@ const Search = () => {
               className="book_wrapper"
               key={`key_${index}`}
             >
-              <h3>Title: {item.title}</h3>
+              <h3
+                onClick={(e) => {
+                  e.stopPropagation();
+                }}
+              >
+                Title: {item.title}
+              </h3>
               <img src={item.image} alt="book cover" />
               <p>Price: {item.price} rub</p>
               <p>Author: {item.author}</p>
               <p>Reviews: {item.reviews_quantity}</p>
-              <p>Rating: {item.rating}</p>
+              <p>Rating: {item.rating ? item.rating : 0}</p>
             </div>
           ))}
         </div>

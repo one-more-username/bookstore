@@ -21,6 +21,12 @@ const Header = () => {
         <button type="button" onClick={() => navigate("/book/search")}>
           Search
         </button>
+        <button type="button" onClick={() => navigate("/login")}>
+          Login
+        </button>
+        <button type="button" onClick={() => navigate("/signup")}>
+          Signup
+        </button>
       </div>
     </header>
   );
